@@ -1,4 +1,5 @@
 import React from 'react';
+import { nanoid } from 'nanoid';
 import { Formik } from 'formik';
 import {
   StyledForm,
@@ -8,7 +9,8 @@ import {
   ErrorMsg,
 } from './ContactForm.styled';
 import * as Yup from 'yup';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contactSlice';
 
 const PhonebookSchema = Yup.object().shape({
   name: Yup.string()
@@ -29,13 +31,26 @@ const PhonebookSchema = Yup.object().shape({
     .max(50, 'Too Long!'),
 });
 
-export const ContactForm = ({ onAdd }) => {
+export const ContactForm = () => {
+  const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
+
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
       validationSchema={PhonebookSchema}
-      onSubmit={(values, actions) => {
-        onAdd(values);
+      onSubmit={({ name, number }, actions) => {
+        const isNameDuplicate = contacts.some(
+          contact =>
+            contact.name.toLowerCase() === name.toLowerCase() ||
+            contact.number === number
+        );
+        if (isNameDuplicate) {
+          alert(`${name} is already in contacts.`);
+          actions.resetForm();
+          return;
+        }
+        dispatch(addContact({ name, number, id: nanoid() }));
         actions.resetForm();
       }}
     >
@@ -60,8 +75,4 @@ export const ContactForm = ({ onAdd }) => {
       </StyledForm>
     </Formik>
   );
-};
-
-ContactForm.propTypes = {
-  onAdd: PropTypes.func.isRequired,
 };
