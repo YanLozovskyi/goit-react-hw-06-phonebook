@@ -11,6 +11,7 @@ import {
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/contactSlice';
+import { toast } from 'react-toastify';
 
 const PhonebookSchema = Yup.object().shape({
   name: Yup.string()
@@ -34,22 +35,32 @@ const PhonebookSchema = Yup.object().shape({
 export const ContactForm = () => {
   const contacts = useSelector(state => state.contacts);
   const dispatch = useDispatch();
-
+  console.log('contacts', contacts);
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
       validationSchema={PhonebookSchema}
       onSubmit={({ name, number }, actions) => {
-        const isNameDuplicate = contacts.some(
-          contact =>
-            contact.name.toLowerCase() === name.toLowerCase() ||
-            contact.number === number
-        );
-        if (isNameDuplicate) {
-          alert(`${name} is already in contacts.`);
+        if (
+          contacts.find(
+            ({ name: oldName }) => oldName.toLowerCase() === name.toLowerCase()
+          )
+        ) {
+          toast.error(`${name} is already in contacts.`);
           actions.resetForm();
           return;
         }
+        if (
+          contacts.find(
+            ({ number: oldNumber }) =>
+              oldNumber.toLowerCase() === number.toLowerCase()
+          )
+        ) {
+          toast.error(`Number ${number} is already in contacts.`);
+          actions.resetForm();
+          return;
+        }
+        toast.success(`${name} added to your contact list.`);
         dispatch(addContact({ name, number, id: nanoid() }));
         actions.resetForm();
       }}

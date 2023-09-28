@@ -1,6 +1,3 @@
-// import React from 'react';
-// import { LOCAL_STORAGE } from 'helpers/localStorage';
-
 import {
   Notifications,
   Filter,
@@ -9,30 +6,15 @@ import {
   ContactForm,
 } from 'components';
 import { useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const App = () => {
-  // const LOCAL_STORAGE_KEY = 'contacts';
-
   const contacts = useSelector(state => state.contacts);
-  // const initialContacts = () => {
-  //   const storedContacts = LOCAL_STORAGE.load(LOCAL_STORAGE_KEY);
-  //   return storedContacts ?? [];
-  // };
-
-  // const [contacts, setContacts] = useState(initialContacts);
-
-  // useEffect(() => {
-  //   LOCAL_STORAGE.save(LOCAL_STORAGE_KEY, contacts);
-  // }, [contacts]);
-
-  // setContacts(prevContacts => [
-  //   ...prevContacts,
-  //   { id: nanoid(), ...newContact },
-  // ]);
-  // };
 
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
       <Section title={'Phonebook'}>
         <ContactForm />
       </Section>
