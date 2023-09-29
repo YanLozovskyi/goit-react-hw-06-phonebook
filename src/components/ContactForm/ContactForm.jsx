@@ -1,6 +1,7 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 import {
   StyledForm,
   Label,
@@ -8,8 +9,8 @@ import {
   Button,
   ErrorMsg,
 } from './ContactForm.styled';
-import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactSlice';
 import { toast } from 'react-toastify';
 
@@ -33,9 +34,9 @@ const PhonebookSchema = Yup.object().shape({
 });
 
 export const ContactForm = () => {
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
-  console.log('contacts', contacts);
+
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
